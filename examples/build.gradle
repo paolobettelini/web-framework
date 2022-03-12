@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':server')
+}
+
+application {
+    mainClass = 'ch.bettelini.examples.Main'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ch.bettelini.examples.Main'
+    }
+
+    from {
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
