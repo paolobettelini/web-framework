@@ -45,6 +45,7 @@ public class RegexPathMatcher implements PathMatcher {
             if (escaping) {
                 buffer.append(c);
                 escaping = false;
+                continue;
             }
 
             if (!variableToken && c == '{') {

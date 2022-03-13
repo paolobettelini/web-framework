@@ -19,14 +19,21 @@ HTTP/1.1 Web Framework
 ### Get request
 
 ```java
+    // Matches the path "/"
     server.get("/", (req, res) -> "Hello, World!".getBytes());
 ```
 
 ### Post request
 
 ```java
+// Matches the path "/"
     server.post("/", (req, res) -> "Hello, World!".getBytes());
 ```
+
+Note that the order of definition matters.
+<br>
+The first path to be matched is the one to be routed,
+even if paths defined after would match the request.
 
 ### Variables
 
@@ -65,15 +72,22 @@ You can use a [...] scope to match any regular expression.
 ```
 
 You can add :regex token after a variable declaration to specify its pattern
+<br>
 The default regex for a variable is .* 
 
 ```java
-    // Matches anything that starts with "/"
-    server.get("/api/{token:[a-zA-Z]{10}}", (req, res) -> {
+    // Name must be at least 1 character
+    server.get("/home/{name:.+}", (req, res) -> {
         // ...
     });
 
+    // Matches /api/token where token is a string of 10 alphabetic letters
+    server.get("/api/{token:[a-zA-Z]{10\\}}", (req, res) -> {
+        // ...
+    });
 ```
+
+Make sure to always escape ']', '[', '}', '{', ':' when it is ambiguous.
 
 ### Redirecting
 
