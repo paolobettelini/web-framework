@@ -60,7 +60,6 @@ public class Htdocs {
                     return onNotFound.process(req, res);
                 }
             }
-
             
             if (!Files.exists(path)) {
                 return onNotFound.process(req, res);

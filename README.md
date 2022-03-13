@@ -26,7 +26,7 @@ HTTP/1.1 Web Framework
 ### Post request
 
 ```java
-// Matches the path "/"
+    // Matches the path "/"
     server.post("/", (req, res) -> "Hello, World!".getBytes());
 ```
 
@@ -36,6 +36,8 @@ The first path to be matched is the one to be routed,
 even if paths defined after would match the request.
 
 ### Variables
+
+You can use a {...} scope to declare a variable.
 
 ```java
     // greet_John
@@ -56,7 +58,7 @@ even if paths defined after would match the request.
     });
 ```
 
-### Pattern Matching
+### Advanced Pattern Matching
 
 You can use a [...] scope to match any regular expression.
 
@@ -66,12 +68,12 @@ You can use a [...] scope to match any regular expression.
         // ...
     });
 
-    server.get("/some/[[a-zA-Z]+]/path", (req, res) -> {
+    server.get("/some/[[a-zA-Z\\]+]/path", (req, res) -> {
         // ...
     });
 ```
 
-You can add :regex token after a variable declaration to specify its pattern
+You can add a :regex token after a variable declaration to specify its pattern
 <br>
 The default regex for a variable is .* 
 
@@ -87,11 +89,11 @@ The default regex for a variable is .*
     });
 ```
 
-Make sure to always escape ']', '[', '}', '{', ':' when it is ambiguous.
+Make sure to always escape ], [, }, {, : when it is ambiguous.
 
 ### Redirecting
 
-```java
+```java    
     // Redirecting /<name> to /home/<name>
 
     server.get("/home/{name}", (req, res) -> 
@@ -110,9 +112,9 @@ Make sure to always escape ']', '[', '}', '{', ':' when it is ambiguous.
     var htdocs = new Htdocs("/path/to/www");
     htdocs.addDefaultFile("index.html");
 
-    // Simple serve
-    server.get("/[.*]", htdocs.route());
-
     // Serve /path/to/www/{path} when the request is /htdocs/{path)}
     server.get("/htdocs{path}", htdocs.route(req -> req.param("path")));
+
+    // Simple serve
+    server.get("/[.*]", htdocs.route());
 ```

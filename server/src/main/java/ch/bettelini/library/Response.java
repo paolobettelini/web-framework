@@ -59,16 +59,24 @@ public class Response {
         builder.append(code.toInteger());
         builder.append(" ");
         builder.append(code);
-        builder.append("\n");
+        builder.append("\r\n");
 
         for (var key : headers.keySet()) {
-            builder.append(key + ": " + headers.get(key) + "\n");
+            builder.append(key);
+            builder.append(": ");
+            builder.append(headers.get(key));
+            builder.append("\r\n");
         }
 
-        builder.append("\n");
+        builder.append("\r\n");
         out.write(builder.toString().getBytes());
 
         out.write(content);
+        //out.write("\r\n".getBytes());
+
+        for (var b : "\r\n".getBytes()) 
+        System.out.println(b);
+
     }
 
 }

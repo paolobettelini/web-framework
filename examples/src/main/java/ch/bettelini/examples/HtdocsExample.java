@@ -9,6 +9,7 @@ public class HtdocsExample {
         var server = new HttpServer(9090);
 
         var htdocs = new Htdocs("/home/paolo/Scrivania/web-framework/www");
+        //var htdocs = new Htdocs("/path/to/www");
         
         htdocs.addDefaultFile("index.html");
         htdocs.addDefaultFile("file.html");

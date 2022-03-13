@@ -10,17 +10,6 @@ public class RegexPathMatcher implements PathMatcher {
     
     private List<PathSegment> segments = new LinkedList<>();
     private Pattern pattern;
-
-    public static void main(String[] args) {
-        var matcher = new RegexPathMatcher("/sometext/[.+]/{var1}/{var2:.+}");
-        
-        var input = "/sometext/REGEX/1/VAR2";
-
-        System.out.println(matcher.matches(input));
-
-        matcher.params(input)
-            .forEach((key, value) -> System.out.println(key + ":\t" + value));
-    }
     
     public RegexPathMatcher(String path) {
         // EXAMPLE:
@@ -92,6 +81,7 @@ public class RegexPathMatcher implements PathMatcher {
         //          VARIABLE var2 .+
 
 
+        /* DEBUG
         int name = 0;
         for (var seg : segments) {
             System.out.print(seg.type + " ");
@@ -101,7 +91,7 @@ public class RegexPathMatcher implements PathMatcher {
             } else {
                 System.out.println(seg.value);
             }
-        }
+        }*/
 
         // Create regex for path matching
         var regex = new StringBuilder();
@@ -122,14 +112,16 @@ public class RegexPathMatcher implements PathMatcher {
                 }
             }
         }
-        System.out.println(regex.toString());
+        // System.out.println(regex.toString());
         this.pattern = Pattern.compile(regex.toString());
      
         // EXAMPLE:
         //          \/sometext\/.*\/.*\/.+
 
-        // TODO: check duplicate variables
-        // TODO: Simplify (remove everything after last VARIABLE)
+        // TODO: Check duplicate variable names
+        // TODO: Remove every segment after VARIABLE|TEXT
+        // Todo: Unless previous char is '\', count [] {}
+        // openings and closures offset to avoid ambiguity
     }
 
     @Override
