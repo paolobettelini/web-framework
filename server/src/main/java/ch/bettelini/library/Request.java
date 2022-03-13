@@ -39,7 +39,9 @@ public class Request {
             String value = line.substring(index + 2, line.length());
             
             headers.put(key, value);
+            System.out.println(key + " " + value);
         }
+        System.out.println();
     }
 
     /**

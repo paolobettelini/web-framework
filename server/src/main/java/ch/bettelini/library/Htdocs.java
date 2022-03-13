@@ -42,7 +42,7 @@ public class Htdocs {
         return (req, res) -> {
             var filePath = filePathConstructor == null ? req.path() : filePathConstructor.apply(req);
             var path = Path.of(root, filePath);
-            System.out.println(path);
+            //System.out.println(path);
 
             if (Files.isDirectory(path)) {
                 boolean found = false;

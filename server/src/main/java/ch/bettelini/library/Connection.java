@@ -2,6 +2,7 @@ package ch.bettelini.library;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,9 +19,7 @@ public class Connection implements Runnable {
 
     @Override
     public void run() {
-        try {
-            
-            var in = new Scanner(client.getInputStream());
+        try (var in = new Scanner(client.getInputStream())) {
             var out = client.getOutputStream();
             
             in.useDelimiter("\n\r");
@@ -38,16 +37,14 @@ public class Connection implements Runnable {
                     lines.add(line);
                 }
 
-                try {
-                    var req = new Request(lines, client.getRemoteSocketAddress());
-                    var res = server.processRequest(req);
+                var req = new Request(lines, client.getRemoteSocketAddress());
+                var res = server.processRequest(req);
 
-                    res.write(out);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                res.write(out);
             }
-        } catch (IOException e) {
+        } catch (SocketException e) {
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
