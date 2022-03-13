@@ -28,14 +28,6 @@ HTTP/1.1 Web Framework
     server.post("/", (req, res) -> "Hello, World!".getBytes());
 ```
 
-### Wildcard
-
-```java
-    server.get("/some/*/path", (req, res) -> {
-        return "Some, Path!".getBytes();
-    });
-```
-
 ### Variables
 
 ```java
@@ -55,6 +47,32 @@ HTTP/1.1 Web Framework
             return "Invalid numbers!".getBytes();
         }
     });
+```
+
+### Pattern Matching
+
+You can use a [...] scope to match any regular expression.
+
+```java
+    // Matches anything that starts with "/"
+    server.get("/[.*]", (req, res) -> {
+        // ...
+    });
+
+    server.get("/some/[[a-zA-Z]+]/path", (req, res) -> {
+        // ...
+    });
+```
+
+You can add :regex token after a variable declaration to specify its pattern
+The default regex for a variable is .* 
+
+```java
+    // Matches anything that starts with "/"
+    server.get("/api/{token:[a-zA-Z]{10}}", (req, res) -> {
+        // ...
+    });
+
 ```
 
 ### Redirecting
@@ -79,7 +97,7 @@ HTTP/1.1 Web Framework
     htdocs.addDefaultFile("index.html");
 
     // Simple serve
-    server.get("/*", htdocs.route());
+    server.get("/[.*]", htdocs.route());
 
     // Serve /path/to/www/{path} when the request is /htdocs/{path)}
     server.get("/htdocs{path}", htdocs.route(req -> req.param("path")));

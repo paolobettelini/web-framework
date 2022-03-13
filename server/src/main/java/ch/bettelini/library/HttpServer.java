@@ -53,11 +53,11 @@ public class HttpServer implements Runnable {
     }
 
     public void get(String path, Route route) {
-        get(new SimplePathMatcher(path), route);
+        get(new RegexPathMatcher(path), route);
     }
 
     public void post(String path, Route route) {
-        post(new SimplePathMatcher(path), route);
+        post(new RegexPathMatcher(path), route);
     }
 
     public void get(PathMatcher matcher, Route route) {

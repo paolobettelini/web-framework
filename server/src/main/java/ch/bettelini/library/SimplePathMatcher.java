@@ -153,16 +153,5 @@ public class SimplePathMatcher implements PathMatcher {
 
     private static record PathSegment(PathSegmentType type, String value) {}
 
-    /*
-    private static interface PathSegment {}
-    private static record Text(String value)    implements PathSegment {}
-    private static record Variable(String name) implements PathSegment {}
-    private static class Wildcard               implements PathSegment {}
-    
-    switch (v) {
-        case Text ss -> {}
-        case Variable v -> {}
-        case Wildcard w -> {}
-    }
-    */
+
 }

@@ -10,25 +10,14 @@ repositories {
 }
 
 // Enable preview features for Java SE 17
-/*tasks {
-    val ENABLE_PREVIEW = "--enable-preview"
- 
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview"
+}
 
-    withType<JavaCompile>() {
-        options.compilerArgs.add(ENABLE_PREVIEW)
- 
-        // Optionally we can show which preview feature we use.
-        options.compilerArgs.add("-Xlint:preview")
- 
-        options.release.set(17)
-    }
- 
-    withType<Test>() {
-        useJUnitPlatform()
-        jvmArgs.add(ENABLE_PREVIEW)
-    }
- 
-    withType<JavaExec>() {
-        jvmArgs.add(ENABLE_PREVIEW)
-    }
-}*/
+tasks.withType(Test) {
+    jvmArgs += "--enable-preview"
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}

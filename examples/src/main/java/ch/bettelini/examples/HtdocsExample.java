@@ -17,7 +17,7 @@ public class HtdocsExample {
         server.get("/htdocs{path}", htdocs.route(req -> req.param("path")));
 
         // Simple serve
-        server.get("/*", htdocs.route());
+        server.get("/[.*]", htdocs.route());
 
         server.start();
     }
