@@ -25,26 +25,27 @@ public class Connection implements Runnable {
             
             in.useDelimiter("\n\r");
 
-            List<String> lines = new LinkedList<>();
+            while (true) {
+                List<String> lines = new LinkedList<>();
 
-            while (in.hasNext()) {
-                var line = in.nextLine();
+                while (in.hasNext()) {
+                    var line = in.nextLine();
 
-                if (line.isBlank()) {
-                    break;
+                    if (line.isBlank()) {
+                        break;
+                    }
+
+                    lines.add(line);
                 }
 
-                lines.add(line);
-                //System.out.println(line);
-            }
+                try {
+                    var req = new Request(lines, client.getRemoteSocketAddress());
+                    var res = server.processRequest(req);
 
-            try {
-                var req = new Request(lines, client.getRemoteSocketAddress());
-                var res = server.processRequest(req);
-
-                res.write(out);
-            } catch (Exception e) {
-                e.printStackTrace();
+                    res.write(out);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

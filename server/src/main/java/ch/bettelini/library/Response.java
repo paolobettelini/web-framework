@@ -53,7 +53,7 @@ public class Response {
             code = HttpCode.OK;
         }
         
-        var builder = new StringBuilder();
+        /*var builder = new StringBuilder();
         builder.append(HttpVersion.HTTP_1_1.toString());
         builder.append(" ");
         builder.append(code.toInteger());
@@ -71,12 +71,26 @@ public class Response {
         builder.append("\r\n");
         out.write(builder.toString().getBytes());
 
+        out.write(content);*/
+
+        out.write(HttpVersion.HTTP_1_1.toString().getBytes());
+        out.write(" ".getBytes());
+        out.write(String.valueOf(code.toInteger()).getBytes());
+        out.write(" ".getBytes());
+        out.write(String.valueOf(code).getBytes());
+        out.write("\r\n".getBytes());
+
+        for (var key : headers.keySet()) {
+            out.write(key.getBytes());
+            out.write(": ".getBytes());
+            out.write(headers.get(key).getBytes());
+            out.write("\r\n".getBytes());
+        }
+
+        out.write("\r\n".getBytes());
+
         out.write(content);
-        //out.write("\r\n".getBytes());
-
-        for (var b : "\r\n".getBytes()) 
-        System.out.println(b);
-
+        //System.out.println("Written: " + content.length);
     }
 
 }
