@@ -2,8 +2,8 @@ package ch.bettelini.library;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,8 +14,21 @@ public class HttpServer implements Runnable {
     private Thread thread;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    private Map<String, Route> getRoutes = new HashMap<>();
-    private Map<String, Route> postRoutes = new HashMap<>();
+    private static record Router(PathMatcher matcher, Route route) {}
+
+    private List<Router> getRoutes = new LinkedList<>();
+    private List<Router> postRoutes = new LinkedList<>();
+
+    private Route onNotFound = (req, res) -> {
+        res.code(HttpCode.NOT_FOUND);
+        return """
+            <html>
+            <body>
+            <p>Error 404 Not Found</p>
+            </body>
+            </html>    
+            """.getBytes();
+    };
 
     public HttpServer(int port) {
         this.port = port;
@@ -40,11 +53,23 @@ public class HttpServer implements Runnable {
     }
 
     public void get(String path, Route route) {
-        getRoutes.put(path, route);
+        get(new SimplePathMatcher(path), route);
     }
 
     public void post(String path, Route route) {
-        postRoutes.put(path, route);
+        post(new SimplePathMatcher(path), route);
+    }
+
+    public void get(PathMatcher matcher, Route route) {
+        getRoutes.add(new Router(matcher, route));
+    }
+
+    public void post(PathMatcher matcher, Route route) {
+        postRoutes.add(new Router(matcher, route));
+    }
+
+    public void onNotFound(Route onNotFound) {
+        this.onNotFound = onNotFound;
     }
 
     Response processRequest(Request request) {
@@ -53,12 +78,23 @@ public class HttpServer implements Runnable {
             case POST -> postRoutes;
         };
 
-        if (!routes.containsKey(request.path())) {
-            return null;
+        Router router = null;
+
+        for (var r : routes) {
+            if (r.matcher.matches(request.path())) {
+                router = r;
+                break;
+            }
         }
 
-        var route = routes.get(request.path());
-
+        Route route;
+        if (router != null) {
+            request.params(router.matcher.params(request.path()));
+            route = router.route;
+        } else {
+            route = onNotFound;
+        }
+        
         var response = new Response();
         response.content(route.process(request, response));
         return response;
@@ -79,5 +115,5 @@ public class HttpServer implements Runnable {
             this.thread = null;
         }
     }
-
+    
 }

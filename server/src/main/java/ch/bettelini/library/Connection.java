@@ -35,7 +35,7 @@ public class Connection implements Runnable {
                 }
 
                 lines.add(line);
-                System.out.println(line);
+                //System.out.println(line);
             }
 
             try {

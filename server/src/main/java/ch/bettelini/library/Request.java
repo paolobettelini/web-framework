@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.xml.sax.HandlerBase;
+
 public class Request {
 
     private HttpMethod method;
@@ -14,10 +16,23 @@ public class Request {
 
     private Map<String, String> headers = new HashMap<>();
 
+    private Map<String, String> params = new HashMap<>();
+
+    public String param(String name) {
+        return params.get(name);
+    }
+
+    protected void params(Map<String, String> params) {
+        this.params = params;
+    }
+
     static Request fromLines(List<String> lines) {
         var request = new Request();
         
         var iterator = lines.iterator();
+        if (!iterator.hasNext()) {
+            throw new IllegalArgumentException("Badly formatted request"); 
+        }
         request.processMethod(iterator.next());
         while (iterator.hasNext()) {
             String line = iterator.next();

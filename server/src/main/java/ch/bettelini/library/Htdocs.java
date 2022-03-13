@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Htdocs {
     
@@ -34,8 +35,12 @@ public class Htdocs {
     }
 
     public Route route() {
+        return route(null);
+    }
+
+    public Route route(Function<Request, String> filePath) {
         return (req, res) -> {
-            var path = Path.of(root, req.path());
+            var path = Path.of(root, filePath == null ? req.path() : filePath.apply(req)) ;
             
             if (Files.isDirectory(path)) {
                 boolean found = false;
@@ -54,6 +59,7 @@ public class Htdocs {
                 }
             }
 
+            
             if (!Files.exists(path)) {
                 return onNotFound.process(req, res);
             }
