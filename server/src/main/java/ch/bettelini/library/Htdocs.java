@@ -38,10 +38,12 @@ public class Htdocs {
         return route(null);
     }
 
-    public Route route(Function<Request, String> filePath) {
+    public Route route(Function<Request, String> filePathConstructor) {
         return (req, res) -> {
-            var path = Path.of(root, filePath == null ? req.path() : filePath.apply(req)) ;
-            
+            var filePath = filePathConstructor == null ? req.path() : filePathConstructor.apply(req);
+            var path = Path.of(root, filePath);
+            System.out.println(path);
+
             if (Files.isDirectory(path)) {
                 boolean found = false;
                 

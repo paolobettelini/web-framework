@@ -19,17 +19,13 @@ HTTP/1.1 Web Framework
 ### Get request
 
 ```java
-    server.get("/", (req, res) -> {
-        return "Hello, World!".getBytes();
-    });
+    server.get("/", (req, res) -> "Hello, World!".getBytes());
 ```
 
 ### Post request
 
 ```java
-    server.post("/", (req, res) -> {
-        return "Hello, World!".getBytes();
-    });
+    server.post("/", (req, res) -> "Hello, World!".getBytes());
 ```
 
 ### Wildcard
@@ -61,6 +57,21 @@ HTTP/1.1 Web Framework
     });
 ```
 
+### Redirecting
+
+```java
+    // Redirecting /<name> to /home/<name>
+
+    server.get("/home/{name}", (req, res) -> 
+        ("Welcome to your home, " + req.param("name") + "!").getBytes());
+
+    server.get("/{name}", (req, res) -> {
+        res.redirect("http://127.0.0.1:9090/home/" + req.param("name"));
+        
+        return "".getBytes();
+    });
+```
+
 ### Serving htdocs
 
 ```java
@@ -71,5 +82,5 @@ HTTP/1.1 Web Framework
     server.get("/*", htdocs.route());
 
     // Serve /path/to/www/{path} when the request is /htdocs/{path)}
-    server.get("/htdocs/{path}", htdocs.route(req -> req.param("path")));
+    server.get("/htdocs{path}", htdocs.route(req -> req.param("path")));
 ```

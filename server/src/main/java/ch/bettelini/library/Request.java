@@ -1,10 +1,9 @@
 package ch.bettelini.library;
 
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.xml.sax.HandlerBase;
 
 public class Request {
 
@@ -18,22 +17,15 @@ public class Request {
 
     private Map<String, String> params = new HashMap<>();
 
-    public String param(String name) {
-        return params.get(name);
-    }
+    private SocketAddress address;
 
-    protected void params(Map<String, String> params) {
-        this.params = params;
-    }
-
-    static Request fromLines(List<String> lines) {
-        var request = new Request();
-        
+    protected Request(List<String> lines, SocketAddress address) {
+        this.address = address;
         var iterator = lines.iterator();
         if (!iterator.hasNext()) {
             throw new IllegalArgumentException("Badly formatted request"); 
         }
-        request.processMethod(iterator.next());
+        processMethod(iterator.next());
         while (iterator.hasNext()) {
             String line = iterator.next();
 
@@ -46,10 +38,8 @@ public class Request {
             String key = line.substring(0, index);
             String value = line.substring(index + 2, line.length());
             
-            request.headers.put(key, value);
+            headers.put(key, value);
         }
-
-        return request;
     }
 
     /**
@@ -80,6 +70,17 @@ public class Request {
             throw new IllegalArgumentException("Unsupported HTTP Method: " + args[0]);
         }
         this.version = version;
+
+        System.out.println(line);
+    }
+
+
+    public String param(String name) {
+        return params.get(name);
+    }
+
+    protected void params(Map<String, String> params) {
+        this.params = params;
     }
 
     public HttpMethod method() {
@@ -92,6 +93,16 @@ public class Request {
 
     public HttpVersion version() {
         return version;
+    }
+
+    public String userAgent() {
+        return headers.containsKey(HttpHeaders.USER_AGENT)
+            ? headers.get(HttpHeaders.USER_AGENT)
+            : null;
+    }
+
+    public SocketAddress ip() {
+        return address;
     }
 
 }

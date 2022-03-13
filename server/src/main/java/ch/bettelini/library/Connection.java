@@ -39,7 +39,7 @@ public class Connection implements Runnable {
             }
 
             try {
-                var req = Request.fromLines(lines);
+                var req = new Request(lines, client.getRemoteSocketAddress());
                 var res = server.processRequest(req);
 
                 res.write(out);

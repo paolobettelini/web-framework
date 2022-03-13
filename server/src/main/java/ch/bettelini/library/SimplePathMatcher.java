@@ -90,7 +90,8 @@ public class SimplePathMatcher implements PathMatcher {
             lastSegment = segment;
         }
      
-        // TODO: Simplify (remove everything after last VARIABLE, remove WILDCARD + ?)
+        // TODO: check duplicate variables
+        // TODO: Simplify (remove everything after last VARIABLE)
         // and VARIABLE before VARIABLE
     }
 

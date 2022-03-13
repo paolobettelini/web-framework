@@ -33,6 +33,15 @@ public class Response {
         headers.put(HttpHeaders.CONTENT_TYPE, type);
     }
 
+    public void redirect(String path) {
+        redirect(path, HttpCode.MOVED_PERMANENTLY);
+    }
+
+    public void redirect(String path, HttpCode code) {
+        this.code = code;
+        header(HttpHeaders.LOCATION, path);
+    }
+
     public void write(OutputStream out) throws IOException {
         headers.put(HttpHeaders.CONTENT_LENGTH, Integer.toString(content.length));
         
