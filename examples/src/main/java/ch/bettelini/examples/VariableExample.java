@@ -9,7 +9,6 @@ public class VariableExample {
 
         // greet_John
         server.get("/greet_{name}", (req, res) -> {
-            System.out.println(req.param("name"));
             return ("Hello, " + req.param("name") + "!").getBytes();
         });
 
@@ -17,7 +16,7 @@ public class VariableExample {
         server.get("/compute{A}+{B}", (req, res) -> {
             try {
                 int a = Integer.parseInt(req.param("A"));
-                int b = Integer.parseInt(req.param("A"));
+                int b = Integer.parseInt(req.param("B"));
                 return Integer.toString(a+b).getBytes();
             } catch (NumberFormatException e) {
                 return "Invalid numbers!".getBytes();

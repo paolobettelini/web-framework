@@ -22,12 +22,29 @@ public class Htdocs {
             """.getBytes();
     };
 
-    private Route onNotFound = DEFAULT_ON_NOT_FOUND;
+    private static final Route DEFAULT_ON_FORBIDDEN = (req, res) -> {
+        res.code(HttpCode.FORBIDDEN);
+        return """
+            <html>
+            <body>
+            <p>Error 403 Forbidden</p>
+            </body>
+            </html>    
+            """.getBytes();
+    };
 
-    private String root;
+    private Route onNotFound = DEFAULT_ON_NOT_FOUND;
+    private Route onForbidden = DEFAULT_ON_FORBIDDEN;
+
+    private String absRoot;
+
+    public Htdocs(String first, String... more) {
+        this.absRoot = Path.of(first, more).toAbsolutePath().toString();
+        System.out.println(absRoot);
+    }
 
     public Htdocs(String root) {
-        this.root = root;
+        this.absRoot = Path.of(root).toAbsolutePath().toString();
     }
 
     public void addDefaultFile(String fileName) {
@@ -35,46 +52,59 @@ public class Htdocs {
     }
 
     public Route route() {
-        return route(null);
+        return (req, res) -> process(req, res, req.path().split("\\/"));
     }
 
-    public Route route(Function<Request, String> filePathConstructor) {
-        return (req, res) -> {
-            var filePath = filePathConstructor == null ? req.path() : filePathConstructor.apply(req);
-            var path = Path.of(root, filePath);
-            //System.out.println(path);
+    public Route route(String filePath) {
+        return (req, res) -> process(req, res, new String[]{ filePath });
+    }
 
-            if (Files.isDirectory(path)) {
-                boolean found = false;
-                
-                for (var defaultFile : defaultFiles) {
-                    var newPath = Path.of(path.toAbsolutePath().toString(), defaultFile);
-                    if (Files.exists(newPath)) {
-                        found = true;
-                        path = newPath;
-                        break;
-                    }
-                }
+    public Route route(String[] filePath) {
+        return (req, res) -> process(req, res, filePath);
+    }
 
-                if (!found) {
-                    return onNotFound.process(req, res);
-                }
-            }
+    public Route route(Function<Request, String[]> filePathConstructor) {
+        return (req, res) -> process(req, res, filePathConstructor.apply(req));
+    }
+
+    private byte[] process(Request req, Response res, String[] filePath) {
+        var path = Path.of(absRoot, filePath);
+
+        if (Files.isDirectory(path)) {
+            boolean found = false;
             
-            if (!Files.exists(path)) {
-                return onNotFound.process(req, res);
+            for (var defaultFile : defaultFiles) {
+                var newPath = Path.of(path.toAbsolutePath().toString(), defaultFile);
+                if (Files.exists(newPath)) {
+                    found = true;
+                    path = newPath;
+                    break;
+                }
             }
 
-            String ext = getExtension(path.getFileName().toString());
-            res.type(HttpContentTypes.fromExtension(ext));
-
-            try {
-                return Files.readAllBytes(path);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!found) {
                 return onNotFound.process(req, res);
             }
-        };
+        }
+        
+        // Check forbidden
+        if (!path.toAbsolutePath().startsWith(absRoot)) {
+            return onForbidden.process(req, res);
+        }
+
+        if (!Files.exists(path)) {
+            return onNotFound.process(req, res);
+        }
+
+        String ext = getExtension(path.getFileName().toString());
+        res.type(HttpContentTypes.fromExtension(ext));
+
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return onNotFound.process(req, res);
+        }
     }
 
     private static String getExtension(String file) {
@@ -84,6 +114,18 @@ public class Htdocs {
 
     public void onNotFound(Route onNotFound) {
         this.onNotFound = onNotFound;
+    }
+
+    public void onForbidden(Route onForbidden) {
+        this.onForbidden = onForbidden;
+    }
+
+    public Route onNotFound() {
+        return onNotFound;
+    }
+
+    public Route onForbidden() {
+        return onForbidden;
     }
 
 }

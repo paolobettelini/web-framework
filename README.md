@@ -42,7 +42,6 @@ You can use a {...} scope to declare a variable.
 ```java
     // greet_John
     server.get("/greet_{name}", (req, res) -> {
-        System.out.println(req.param("name"));
         return ("Hello, " + req.param("name") + "!").getBytes();
     });
 
@@ -50,7 +49,7 @@ You can use a {...} scope to declare a variable.
     server.get("/compute{A}+{B}", (req, res) -> {
         try {
             int a = Integer.parseInt(req.param("A"));
-            int b = Integer.parseInt(req.param("A"));
+            int b = Integer.parseInt(req.param("B"));
             return Integer.toString(a+b).getBytes();
         } catch (NumberFormatException e) {
             return "Invalid numbers!".getBytes();
@@ -111,9 +110,6 @@ Make sure to always escape ], [, }, {, : when it is ambiguous.
 ```java
     var htdocs = new Htdocs("/path/to/www");
     htdocs.addDefaultFile("index.html");
-
-    // Serve /path/to/www/{path} when the request is /htdocs/{path)}
-    server.get("/htdocs{path}", htdocs.route(req -> req.param("path")));
 
     // Simple serve
     server.get("/[.*]", htdocs.route());

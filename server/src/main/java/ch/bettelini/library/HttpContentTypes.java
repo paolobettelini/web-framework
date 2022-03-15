@@ -21,7 +21,7 @@ public class HttpContentTypes {
                  "zip",
                  "json",
                  "javascript" -> "application/" + ext;
-            default -> "*";
+            default -> "*/*";
         };
     }
 

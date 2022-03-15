@@ -1,2 +1,2 @@
-rootProject.name = 'rest-api'
+rootProject.name = 'web-framework'
 include('server', 'examples')

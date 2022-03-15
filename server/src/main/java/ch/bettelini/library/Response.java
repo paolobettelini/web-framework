@@ -43,7 +43,9 @@ public class Response {
     }
 
     public void write(OutputStream out) throws IOException {
-        headers.put(HttpHeaders.CONTENT_LENGTH, Integer.toString(content.length));
+        if (content != null) {
+            headers.put(HttpHeaders.CONTENT_LENGTH, Integer.toString(content.length));
+        }
         
         if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
             headers.put(HttpHeaders.CONTENT_TYPE, "text/html");
@@ -52,26 +54,6 @@ public class Response {
         if (code == null) {
             code = HttpCode.OK;
         }
-        
-        /*var builder = new StringBuilder();
-        builder.append(HttpVersion.HTTP_1_1.toString());
-        builder.append(" ");
-        builder.append(code.toInteger());
-        builder.append(" ");
-        builder.append(code);
-        builder.append("\r\n");
-
-        for (var key : headers.keySet()) {
-            builder.append(key);
-            builder.append(": ");
-            builder.append(headers.get(key));
-            builder.append("\r\n");
-        }
-
-        builder.append("\r\n");
-        out.write(builder.toString().getBytes());
-
-        out.write(content);*/
 
         out.write(HttpVersion.HTTP_1_1.toString().getBytes());
         out.write(" ".getBytes());
@@ -89,8 +71,9 @@ public class Response {
 
         out.write("\r\n".getBytes());
 
-        out.write(content);
-        //System.out.println("Written: " + content.length);
+        if (content != null) {
+            out.write(content);
+        }
     }
 
 }
