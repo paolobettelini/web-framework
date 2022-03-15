@@ -39,9 +39,7 @@ public class Request {
             String value = line.substring(index + 2, line.length());
             
             headers.put(key, value);
-            System.out.println(key + " " + value);
         }
-        System.out.println();
     }
 
     /**
@@ -72,8 +70,6 @@ public class Request {
             throw new IllegalArgumentException("Unsupported HTTP Method: " + args[0]);
         }
         this.version = version;
-
-        System.out.println(line);
     }
 
 

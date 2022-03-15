@@ -7,12 +7,12 @@ dependencies {
 }
 
 application {
-    mainClass = 'ch.bettelini.examples.Main'
+    mainClass = 'ch.bettelini.examples.HtdocsExample'
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ch.bettelini.examples.Main'
+        attributes 'Main-Class': 'ch.bettelini.examples.HtdocsExample'
     }
 
     from {

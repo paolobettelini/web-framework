@@ -18,7 +18,7 @@ public class Htdocs {
             <body>
             <p>Error 404 Not Found</p>
             </body>
-            </html>    
+            </html>
             """.getBytes();
     };
 
@@ -29,7 +29,7 @@ public class Htdocs {
             <body>
             <p>Error 403 Forbidden</p>
             </body>
-            </html>    
+            </html>
             """.getBytes();
     };
 
@@ -40,7 +40,6 @@ public class Htdocs {
 
     public Htdocs(String first, String... more) {
         this.absRoot = Path.of(first, more).toAbsolutePath().toString();
-        System.out.println(absRoot);
     }
 
     public Htdocs(String root) {

@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.tinylog.Logger;
+
 public class Response {
     
     private byte[] content;
@@ -54,6 +56,8 @@ public class Response {
         if (code == null) {
             code = HttpCode.OK;
         }
+
+        Logger.info("Response {} {}", code.toInteger(), code);
 
         out.write(HttpVersion.HTTP_1_1.toString().getBytes());
         out.write(" ".getBytes());
